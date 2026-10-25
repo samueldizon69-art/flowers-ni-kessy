@@ -1,0 +1,692 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para sa dragon kong si kessy</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: #8b2457;
+    background: linear-gradient(135deg, #ffd8ec, #ff9acb, #f9d5ff);
+}
+
+.container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+    transition: opacity .7s ease;
+}
+
+.container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+h1 {
+    font-size: clamp(25px, 5vw, 40px);
+    margin: 0 0 12px;
+}
+
+.subtitle {
+    font-size: 17px;
+    margin: 5px 0 20px;
+}
+
+h2 {
+    font-size: clamp(21px, 4vw, 28px);
+    margin: 10px 0;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin-top: 18px;
+    min-height: 55px;
+}
+
+button {
+    border: none;
+    border-radius: 30px;
+    padding: 13px 26px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 15px #b84b8040;
+    transition: transform .2s, background .2s;
+}
+
+#yes {
+    background: #ff3e91;
+    color: white;
+}
+
+#yes:hover {
+    background: #ec247c;
+}
+
+#no {
+    background: white;
+    color: #c02f70;
+    transform-origin: center;
+}
+
+/* FLOWER SCENE */
+
+.bouquet-scene {
+    display: none;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 5;
+    background:
+        radial-gradient(circle at 50% 45%, #ffe5f5 0%, transparent 45%),
+        linear-gradient(135deg, #ffd8ec, #ff9acb, #f9d5ff);
+}
+
+.bouquet-scene.show {
+    display: block;
+}
+
+/* SPARKLES */
+
+.sparkle {
+    position: absolute;
+    font-size: clamp(22px, 4vw, 35px);
+    animation: twinkle 2s ease-in-out infinite alternate;
+}
+
+.s1 { left: 8%; top: 15%; }
+.s2 { right: 10%; top: 23%; animation-delay: -.5s; }
+.s3 { left: 15%; bottom: 18%; animation-delay: -1s; }
+.s4 { right: 12%; bottom: 15%; animation-delay: -.7s; }
+.s5 { left: 48%; top: 8%; animation-delay: -.3s; }
+.s6 { right: 25%; bottom: 35%; animation-delay: -1.2s; }
+
+/* THE WHOLE BOUQUET MOVES TOGETHER */
+
+.bouquet-orbit {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    left: 0;
+    top: 0;
+    transform-origin: top left;
+    animation: travel 7s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+/* HAND */
+
+.holding-hand {
+    position: absolute;
+    width: 165px;
+    height: 185px;
+    left: 167.5px;
+    top: 225px;
+    z-index: 4;
+    filter: drop-shadow(0 8px 10px #b85a7850);
+}
+
+/* STEMS */
+
+.bouquet-stems {
+    position: absolute;
+    width: 110px;
+    height: 150px;
+    left: 195px;
+    top: 155px;
+    z-index: 3;
+}
+
+.stem {
+    position: absolute;
+    left: 52px;
+    top: 0;
+    width: 5px;
+    height: 150px;
+    background: linear-gradient(to right, #20844e, #86d978);
+    border-radius: 5px;
+    transform-origin: top center;
+}
+
+.stem:nth-child(1) { transform: rotate(-32deg); }
+.stem:nth-child(2) { transform: rotate(-17deg); }
+.stem:nth-child(3) { transform: rotate(0deg); }
+.stem:nth-child(4) { transform: rotate(17deg); }
+.stem:nth-child(5) { transform: rotate(32deg); }
+
+.leaf {
+    position: absolute;
+    width: 30px;
+    height: 15px;
+    border-radius: 100% 0 100% 0;
+    background: linear-gradient(135deg, #9be87b, #228a4c);
+}
+
+.leaf.one {
+    top: 43px;
+    left: 15px;
+    transform: rotate(20deg);
+}
+
+.leaf.two {
+    top: 61px;
+    left: 64px;
+    transform: rotate(75deg);
+}
+
+.leaf.three {
+    top: 76px;
+    left: 28px;
+    transform: rotate(10deg);
+}
+
+/* FLOWERS */
+
+.flower {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    z-index: 4;
+    scale: 1.15;
+    animation: flowerSway 3s ease-in-out infinite alternate;
+}
+
+/* FLOWER POSITIONS */
+
+.flower.f1 { left: 150px; top: 25px; }
+.flower.f2 { left: 200px; top: 0; animation-delay: -.8s; }
+.flower.f3 { left: 250px; top: 25px; animation-delay: -1.4s; }
+.flower.f4 { left: 165px; top: 85px; animation-delay: -.4s; }
+.flower.f5 { left: 225px; top: 90px; animation-delay: -1.8s; }
+
+/* BIGGER PETALS */
+
+.petal {
+    position: absolute;
+    left: 29px;
+    top: -5px;
+    width: 42px;
+    height: 65px;
+    border-radius: 50% 50% 42% 42%;
+    transform-origin: 21px 64px;
+    display: flex;
+    justify-content: center;
+    padding-top: 13px;
+    font-size: 9px;
+    font-weight: bold;
+    color: #84275a;
+    border: 1.5px solid #ffffff80;
+    background: linear-gradient(to bottom, #fff9ff, #ff75b9);
+    box-shadow: 0 0 12px #ff7cce70;
+    pointer-events: auto;
+    cursor: pointer;
+    touch-action: manipulation;
+    will-change: transform, opacity;
+}
+
+.flower.purple .petal {
+    background: linear-gradient(to bottom, #fff5ff, #bd8cff);
+    color: #65318d;
+}
+
+.flower.yellow .petal {
+    background: linear-gradient(to bottom, #fffce3, #ffc95d);
+    color: #96521a;
+}
+
+/* PETAL ANGLES */
+
+.petal:nth-child(1) { --petal-angle: 0deg; transform: rotate(var(--petal-angle)); }
+.petal:nth-child(2) { --petal-angle: 45deg; transform: rotate(var(--petal-angle)); }
+.petal:nth-child(3) { --petal-angle: 90deg; transform: rotate(var(--petal-angle)); }
+.petal:nth-child(4) { --petal-angle: 135deg; transform: rotate(var(--petal-angle)); }
+.petal:nth-child(5) { --petal-angle: 180deg; transform: rotate(var(--petal-angle)); }
+.petal:nth-child(6) { --petal-angle: 225deg; transform: rotate(var(--petal-angle)); }
+.petal:nth-child(7) { --petal-angle: 270deg; transform: rotate(var(--petal-angle)); }
+.petal:nth-child(8) { --petal-angle: 315deg; transform: rotate(var(--petal-angle)); }
+
+/* BIGGER FLOWER CENTERS */
+
+.flower-center {
+    position: absolute;
+    left: 23px;
+    top: 23px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff6b1, #ffb31b);
+    border: 3px solid #fff0b5;
+    box-shadow: 0 0 18px #ffdc7a;
+    z-index: 2;
+}
+
+/* PETAL FALLING ANIMATION */
+
+.petal.loose {
+    animation: petalFall 1.5s cubic-bezier(.55, .05, .8, .4) forwards;
+    pointer-events: none;
+}
+
+@keyframes petalFall {
+    0% {
+        transform: rotate(var(--petal-angle)) translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    25% {
+        transform: rotate(var(--petal-angle)) translateY(18px) translateX(12px) rotate(100deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(var(--petal-angle)) translateY(75vh) translateX(70px) rotate(520deg);
+        opacity: 0;
+    }
+}
+
+/* RIBBON */
+
+.ribbon {
+    position: absolute;
+    width: 55px;
+    height: 35px;
+    left: 222.5px;
+    top: 285px;
+    background: linear-gradient(135deg, #ff4f9a, #c81769);
+    border-radius: 8px;
+    z-index: 5;
+    transform: rotate(-8deg);
+    box-shadow: 0 4px 10px #a51e5c60;
+}
+
+.ribbon::before,
+.ribbon::after {
+    content: "";
+    position: absolute;
+    top: 7px;
+    width: 26px;
+    height: 28px;
+    background: #ff75b2;
+    z-index: -1;
+}
+
+.ribbon::before {
+    left: -17px;
+    clip-path: polygon(0 0, 100% 20%, 80% 100%, 40% 70%);
+}
+
+.ribbon::after {
+    right: -17px;
+    clip-path: polygon(0 20%, 100% 0, 60% 70%, 20% 100%);
+}
+
+/* FLOATING KESSY TEXT */
+
+.heart {
+    position: fixed;
+    bottom: -40px;
+    pointer-events: none;
+    z-index: 10;
+    animation: rise linear forwards;
+}
+
+/* ANIMATIONS */
+
+@keyframes travel {
+    0% {
+        transform: translate(1vw, 2vh) scale(.95) rotate(-8deg);
+    }
+
+    25% {
+        transform: translate(calc(100vw - 500px), 4vh) scale(1.08) rotate(8deg);
+    }
+
+    50% {
+        transform: translate(calc(100vw - 500px), calc(100vh - 500px)) scale(1.12) rotate(-8deg);
+    }
+
+    75% {
+        transform: translate(1vw, calc(100vh - 500px)) scale(1.02) rotate(8deg);
+    }
+
+    100% {
+        transform: translate(25vw, 20vh) scale(1.1) rotate(-8deg);
+    }
+}
+
+@keyframes flowerSway {
+    from { translate: 0 0; }
+    to { translate: 0 -7px; }
+}
+
+@keyframes twinkle {
+    from {
+        opacity: .4;
+        transform: scale(.8) rotate(-10deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.2) rotate(10deg);
+    }
+}
+
+@keyframes rise {
+    from {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* MOBILE LAYOUT */
+
+@media (max-width: 600px) {
+    .bouquet-orbit {
+        width: 340px;
+        height: 340px;
+        animation: travelMobile 6s ease-in-out infinite alternate;
+    }
+
+    .flower {
+        scale: 1.15;
+    }
+
+    .flower.f1 { left: 20px; top: 30px; }
+    .flower.f2 { left: 70px; top: 5px; }
+    .flower.f3 { left: 120px; top: 30px; }
+    .flower.f4 { left: 35px; top: 90px; }
+    .flower.f5 { left: 95px; top: 95px; }
+
+    .bouquet-stems {
+        left: 115px;
+        top: 150px;
+        transform: scale(.8);
+        transform-origin: top center;
+    }
+
+    .holding-hand {
+        width: 140px;
+        height: 160px;
+        left: 100px;
+        top: 215px;
+    }
+
+    .ribbon {
+        left: 142px;
+        top: 255px;
+        transform: scale(.85) rotate(-8deg);
+    }
+
+    .petal {
+        width: 42px;
+        height: 65px;
+        left: 29px;
+        top: -5px;
+        transform-origin: 21px 64px;
+        font-size: 9px;
+    }
+
+    .flower-center {
+        left: 23px;
+        top: 23px;
+        width: 54px;
+        height: 54px;
+    }
+
+    @keyframes travelMobile {
+        0% {
+            transform: translate(1vw, 3vh) scale(.92) rotate(-7deg);
+        }
+
+        25% {
+            transform: translate(calc(100vw - 340px), 3vh) scale(1.02) rotate(7deg);
+        }
+
+        50% {
+            transform: translate(calc(100vw - 340px), calc(100vh - 340px)) scale(1.05) rotate(-7deg);
+        }
+
+        75% {
+            transform: translate(1vw, calc(100vh - 340px)) scale(.98) rotate(7deg);
+        }
+
+        100% {
+            transform: translate(12vw, 20vh) scale(1.04) rotate(-7deg);
+        }
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- FLOWER SCENE -->
+
+<div class="bouquet-scene" id="bouquetScene">
+    <div class="sparkle s1">✨</div>
+    <div class="sparkle s2">💗</div>
+    <div class="sparkle s3">✨</div>
+    <div class="sparkle s4">🌟</div>
+    <div class="sparkle s5">💫</div>
+    <div class="sparkle s6">🌸</div>
+
+    <div class="bouquet-orbit">
+
+        <!-- CARTOON HAND -->
+        <svg class="holding-hand" viewBox="0 0 200 220"
+             xmlns="http://www.w3.org/2000/svg"
+             aria-label="A hand holding the bouquet" role="img">
+            <defs>
+                <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ffe0c2"/>
+                    <stop offset="100%" stop-color="#e9a77e"/>
+                </linearGradient>
+            </defs>
+
+            <path d="M65 210 L65 170 Q55 155 58 135 L65 105 Q68 94 78 98 Q85 101 82 114 L78 132 L84 85 Q86 73 96 76 Q106 78 103 91 L99 123 L108 91 Q112 80 121 85 Q130 89 125 101 L117 130 L129 108 Q135 98 144 104 Q152 110 145 121 L130 151 Q143 143 151 151 Q158 160 148 170 L125 192 L125 210 Z"
+                  fill="url(#skin)" stroke="#bd805f" stroke-width="3" stroke-linejoin="round"/>
+
+            <path d="M77 155 Q91 165 106 154 M95 178 Q109 185 122 173"
+                  fill="none" stroke="#bd805f" stroke-width="2.5" stroke-linecap="round"/>
+
+            <path d="M87 84 Q92 80 97 84"
+                  fill="none" stroke="#fff0df" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+
+        <!-- STEMS AND LEAVES -->
+        <div class="bouquet-stems">
+            <div class="stem"></div>
+            <div class="stem"></div>
+            <div class="stem"></div>
+            <div class="stem"></div>
+            <div class="stem"></div>
+            <div class="leaf one"></div>
+            <div class="leaf two"></div>
+            <div class="leaf three"></div>
+        </div>
+
+        <!-- FLOWER 1 -->
+        <div class="flower f1">
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="flower-center"></div>
+        </div>
+
+        <!-- FLOWER 2 -->
+        <div class="flower purple f2">
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="flower-center"></div>
+        </div>
+
+        <!-- FLOWER 3 -->
+        <div class="flower yellow f3">
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="flower-center"></div>
+        </div>
+
+        <!-- FLOWER 4 -->
+        <div class="flower purple f4">
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="flower-center"></div>
+        </div>
+
+        <!-- FLOWER 5 -->
+        <div class="flower f5">
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="petal">Kessy</div>
+            <div class="flower-center"></div>
+        </div>
+
+        <div class="ribbon"></div>
+    </div>
+</div>
+
+<!-- INTRO SCREEN -->
+
+<div class="container" id="intro">
+    <h1>🌷WASSAP, ITS ME SAMMY 🌷</h1>
+    <p class="subtitle">OH BOWLAKLAK</p>
+    <h2 id="question">pag napindot mo ung no, idol na kita</h2>
+
+    <div class="buttons">
+        <button id="yes">Yes 💖</button>
+        <button id="no">No 🙈</button>
+    </div>
+</div>
+
+<script>
+const yesButton = document.getElementById("yes");
+const noButton = document.getElementById("no");
+const question = document.getElementById("question");
+const intro = document.getElementById("intro");
+const bouquetScene = document.getElementById("bouquetScene");
+
+let yesCount = 0;
+let noSize = 1;
+
+/* TAP A PETAL TO MAKE IT FALL */
+bouquetScene.addEventListener("click", (event) => {
+    const petal = event.target.closest(".petal");
+
+    if (!petal || petal.classList.contains("loose")) {
+        return;
+    }
+
+    petal.classList.add("loose");
+    petal.setAttribute("aria-label", "Petal released");
+});
+
+/* NO BUTTON SHRINKS AND MOVES */
+noButton.addEventListener("click", () => {
+    noSize *= 0.75;
+
+    noButton.style.transform = `scale(${noSize})`;
+    noButton.style.position = "fixed";
+
+    const maxX = Math.max(
+        10,
+        window.innerWidth - noButton.offsetWidth * noSize - 10
+    );
+
+    const maxY = Math.max(
+        10,
+        window.innerHeight - noButton.offsetHeight * noSize - 10
+    );
+
+    noButton.style.left = Math.max(10, Math.random() * maxX) + "px";
+    noButton.style.top = Math.max(10, Math.random() * maxY) + "px";
+});
+
+/* YES BUTTON */
+yesButton.addEventListener("click", () => {
+    yesCount++;
+
+    if (yesCount === 1) {
+        yesButton.textContent = "Sure?";
+        question.textContent = "Are you really sure, Kessy?";
+    } else {
+        intro.classList.add("hidden");
+        bouquetScene.classList.add("show");
+
+        for (let i = 0; i < 45; i++) {
+            const heart = document.createElement("div");
+
+            heart.className = "heart";
+            heart.textContent = "kessy";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = (16 + Math.random() * 22) + "px";
+            heart.style.animationDelay = Math.random() * 4 + "s";
+            heart.style.animationDuration = (5 + Math.random() * 5) + "s";
+
+            document.body.appendChild(heart);
+
+            heart.addEventListener("animationend", () => {
+                heart.remove();
+            });
+        }
+    }
+});
+</script>
+
+</body>
+</html>
